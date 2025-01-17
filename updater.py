@@ -4,19 +4,6 @@ import requests,logging
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# def get_public_ip():
-#   """
-#   Fetch the current public IP of the system using an external API.
-#   """
-#   try:
-#     response = requests.get("https://api64.ipify.org?format=json")
-#     response.raise_for_status()
-#     ip = response.json().get("ip")
-#     logging.info(f"Fetched public IP: {ip}")
-#     return ip
-#   except requests.RequestException as e:
-#     logging.error(f"Error fetching public IP: {e}")
-#     return None
   
 def get_public_ip():
   try:
@@ -27,7 +14,6 @@ def get_public_ip():
     logging.info(ip_info)
     return ip_info['ip']
   except requests.RequestException as e:
-    # Handle any errors during the request
     logging.error(f"Error fetching public IP: {e}")
     return None
 
