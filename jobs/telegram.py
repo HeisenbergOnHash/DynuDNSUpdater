@@ -30,7 +30,7 @@ class TelegramBot:
 
     @self.bot.message_handler(commands=['update_ip'])
     def handle_update_ip(message):
-      status = update_dynu_dns('ZX444b3443XTb3dT4c4d464Wd3WU6gUW', 'heisenberglabs.mywire.org', '122.169.236.3')
+      status = update_dynu_dns('ZX444b3443XTb3dT4c4d464Wd3WU6gUW', 'heisenberglabs.mywire.org')
       self.bot.send_message(message.chat.id, f"Update Status: {status}")
 
   def start_bot(self):
