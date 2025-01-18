@@ -1,30 +1,33 @@
-# Use the official Python image as the base image
-FROM python:3.10-slim
+FROM python:3.12-slim
 
-# Set the working directory inside the container
-WORKDIR /app
+# Set the environment variable for the time zone
+ENV TZ=UTC
 
-# Copy the Python script and requirements file into the container
-COPY main.py /app/main.py
-COPY requirements.txt /app/requirements.txt
+WORKDIR /TheServerBot
 
-# Install any dependencies specified in the requirements file
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt /TheServerBot/
 
-# Install cron
-RUN apt-get update && apt-get install -y cron && rm -rf /var/lib/apt/lists/*
+# Install necessary system dependencies
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    libpq-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-# Add the cron job to execute the script every 5 minutes
-RUN echo "*/5 * * * * python /app/main.py >> /app/cron.log 2>&1" > /etc/cron.d/script-cron
+# Set up a virtual environment
+RUN python3 -m venv /venv
 
-# Set the proper permissions for the cron file
-RUN chmod 0644 /etc/cron.d/script-cron
+# Upgrade pip and install required Python packages
+RUN /venv/bin/pip install --upgrade pip && \
+    /venv/bin/pip install -r requirements.txt
 
-# Apply the cron job
-RUN crontab /etc/cron.d/script-cron
+# Copy the application code to the container
+COPY . /TheServerBot/
 
-# Expose a log file to view the cron output
-RUN touch /app/cron.log
+# Update PATH environment variable to include the virtual environment binaries
+ENV PATH="/venv/bin:$PATH"
 
-# Run the cron daemon
-CMD ["cron", "-f"]
+
+# Command to run the application
+CMD ["python", "main.py"]

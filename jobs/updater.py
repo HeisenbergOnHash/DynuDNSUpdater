@@ -1,10 +1,5 @@
 import requests,logging
 
-
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-  
 def get_public_ip():
   try:
     # Use an external service to get the public IP
@@ -36,7 +31,7 @@ def update_dynu_dns(api_key, hostname, ip_address=None):
     ip_address = get_public_ip()
     if not ip_address:
       logging.error("Could not fetch the public IP. Aborting update.")
-      return
+      return "Could not fetch the public IP. Aborting update."
 
   try:
     response = requests.get(url, headers=headers)
@@ -56,9 +51,11 @@ def update_dynu_dns(api_key, hostname, ip_address=None):
         update_response = requests.post(update_url, json=payload, headers=headers)
         update_response.raise_for_status()
         logging.info(f"Successfully updated IP for {hostname} to {ip_address}")
-        return
+        return f"Successfully updated IP for {hostname} to {ip_address}"
 
     logging.warning(f"Hostname {hostname} not found in DNS records.")
+    return f"Hostname {hostname} not found in DNS records."
   except requests.RequestException as e:
     logging.error(f"Error updating DynuDNS: {e}")
+    return f"Error updating DynuDNS: {e}"
 
